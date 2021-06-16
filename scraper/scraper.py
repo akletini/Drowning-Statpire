@@ -1,12 +1,9 @@
-from re import sub
 import requests
 import instaloader
 import spotipy
 import json
 from spotipy.oauth2 import SpotifyOAuth, SpotifyClientCredentials
 from bs4 import BeautifulSoup
-from models import models
-from datetime import datetime
 from googleapiclient.discovery import build
 
 
@@ -79,17 +76,17 @@ class Scraper:
             json.dump(response, jsonFile, indent=4, sort_keys=False)
 
 
-if __name__ == "__main__":
-    scraper = Scraper()
-    scraper.initCredentials()
-    scraper.getYouTubeStats()
+# if __name__ == "__main__":
+#     scraper = Scraper()
+#     scraper.initCredentials()
+#     scraper.getYouTubeStats()
 
 
-def other():
-    instaStats = scraper.getInstagramStats()
-    followers = instaStats[0]
-    followees = instaStats[1]
-    date_time = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
-    insta = models.InstagramEntry(followers, followees, date_time)
-    print(insta)
-    scraper.getSpotifyFollowersWithAPI()
+# def other():
+#     instaStats = scraper.getInstagramStats()
+#     followers = instaStats[0]
+#     followees = instaStats[1]
+#     date_time = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+#     insta = models.InstagramEntry(followers, followees, date_time)
+#     print(insta)
+#     scraper.getSpotifyFollowersWithAPI()
