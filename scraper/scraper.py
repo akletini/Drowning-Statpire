@@ -1,7 +1,7 @@
 import requests
 import instaloader
 import spotipy
-import json
+import json, os
 from spotipy.oauth2 import SpotifyOAuth, SpotifyClientCredentials
 from bs4 import BeautifulSoup
 from googleapiclient.discovery import build
@@ -10,22 +10,24 @@ from googleapiclient.discovery import build
 class Scraper:
     def __init__(self):
         self.credentials = {}
+        self.instaloader = None
 
     def initCredentials(self):
-        with open("credentials.json") as creds:
+        __location__ = os.path.realpath(
+            os.path.join(os.getcwd(), os.path.dirname(__file__))
+        )
+        with open(os.path.join(__location__, "credentials.json")) as creds:
             self.credentials = json.load(creds)
+        self.instaloader = instaloader.Instaloader()
 
     def getInstagramStats(self):
-        L = instaloader.Instaloader()
         profile = instaloader.Profile.from_username(
-            L.context, "drowningempire"
+            self.instaloader.context, "drowningempire"
         )
 
-        print(profile.followers)
-        print(profile.followees)
         return [profile.followers, profile.followees]
 
-    def getSpotifyStats(self):
+    def getSpotifyMonthlyListeners(self):
         url = "https://open.spotify.com/artist/34eXrgTr84KLThfaO8BAa8"
         page = requests.get(url)
 
@@ -37,7 +39,7 @@ class Scraper:
         content = content.split("Artist · ")[1]
         content = content.split(" monthly")[0]
 
-        print(content)
+        return content
 
     def getSpotifyFollowersWithAPI(self):
         client_id = self.credentials["spotify"]["client_id"]
@@ -54,7 +56,12 @@ class Scraper:
         artist = sp.artist(artist_id)
 
         followers = artist["followers"]["total"]
-        print(followers)
+        return followers
+
+    def getSpotifyStats(self):
+        followers = self.getSpotifyFollowersWithAPI()
+        monthly_listeners = self.getSpotifyMonthlyListeners()
+        return [followers, monthly_listeners]
 
     def getYouTubeStats(self):
         api_key = self.credentials["youtube"]["api_key"]
@@ -69,11 +76,11 @@ class Scraper:
 
         subCount = response["items"][0]["statistics"]["subscriberCount"]
         totalViewCount = response["items"][0]["statistics"]["viewCount"]
-        print(subCount)
-        print(totalViewCount)
 
         with open("yt_response.json", "w") as jsonFile:
             json.dump(response, jsonFile, indent=4, sort_keys=False)
+
+        return [subCount, totalViewCount]
 
 
 # if __name__ == "__main__":

@@ -4,16 +4,20 @@ from scraper.scraper import Scraper
 from datetime import datetime
 
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="../templates")
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///site.db"
 db = SQLAlchemy(app)
 
 from models.models import *
+from . import db_controller
+
+scraper = Scraper()
 
 
 @app.route("/")
 def home():
-    scraper = Scraper()
+
+    scraper.initCredentials()
     instaStats = scraper.getInstagramStats()
     followers = instaStats[0]
     followees = instaStats[1]
@@ -21,10 +25,17 @@ def home():
     insta = InstagramEntry(
         followCount=followers, followeeCount=followees, date=date_time
     )
-    persistInstagramEntity(insta)
-    return "<h1>Hello World</h1>"
 
+    yt_stats = scraper.getYouTubeStats()
 
-def persistInstagramEntity(entity):
-    db.session.add(entity)
-    db.session.commit()
+    spotify_stats = scraper.getSpotifyStats()
+
+    return render_template(
+        "index.html",
+        subcount=yt_stats[0],
+        totalViews=yt_stats[1],
+        instaFollowers=followers,
+        instaFollowees=followees,
+        spotifyFollowers=spotify_stats[0],
+        spotifyMonthly=spotify_stats[1],
+    )
