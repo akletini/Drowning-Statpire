@@ -11,6 +11,7 @@ class Scraper:
     def __init__(self):
         self.credentials = {}
         self.instaloader = None
+        self.instagramProfile = None
 
     def initCredentials(self):
         __location__ = os.path.realpath(
@@ -18,23 +19,51 @@ class Scraper:
         )
         with open(os.path.join(__location__, "credentials.json")) as creds:
             self.credentials = json.load(creds)
-        self.instaloader = instaloader.Instaloader()
+        self.instaloader = instaloader.Instaloader(quiet=True)
+        self.instaloader.load_session_from_file(
+            self.credentials["instagram"]["user"]
+        )
 
     def getInstagramStats(self):
         profile = instaloader.Profile.from_username(
             self.instaloader.context, "drowningempire"
         )
-
+        self.instagramProfile = profile
         return [profile.followers, profile.followees]
+
+    def getInstagramPostDetails(self):
+        if self.instagramProfile is None:
+            self.getInstagramStats()
+
+        profile = self.instagramProfile
+        post_array = []
+        posts = list(profile.get_posts())
+        post_count = len(posts)
+        i = 0
+        for post in posts:
+            id = post_count - i
+            comment_count = post.comments
+            like_count = post.likes
+            post_date = post.date.strftime("%d.%m.%Y at %H:%M:%S")
+            post_array.append(
+                {
+                    "id": id,
+                    "likes": like_count,
+                    "comments": comment_count,
+                    "date": post_date,
+                }
+            )
+            i += 1
+        return post_array
 
     def getSpotifyMonthlyListeners(self):
         url = "https://open.spotify.com/artist/34eXrgTr84KLThfaO8BAa8"
-        page = requests.get(url)
+        page = requests.get(url, headers={"Cache-Control": "no-cache"})
 
         soup = BeautifulSoup(page.content, "html.parser")
 
         line = soup.find("meta", property="og:description")
-
+        print(line)
         content = line["content"]
         content = content.split("Artist · ")[1]
         content = content.split(" monthly")[0]
@@ -82,18 +111,19 @@ class Scraper:
 
         return [subCount, totalViewCount]
 
+    ## UTIL Methods ##
 
-# if __name__ == "__main__":
-#     scraper = Scraper()
-#     scraper.initCredentials()
-#     scraper.getYouTubeStats()
+    def getMostLikedPost(self, posts):
+        max = 0
+        for post in posts:
+            if max < post["likes"]:
+                max = post["likes"]
+        return max
 
-
-# def other():
-#     instaStats = scraper.getInstagramStats()
-#     followers = instaStats[0]
-#     followees = instaStats[1]
-#     date_time = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
-#     insta = models.InstagramEntry(followers, followees, date_time)
-#     print(insta)
-#     scraper.getSpotifyFollowersWithAPI()
+    def getAvgLikes(self, posts):
+        avg = 0
+        total = 0
+        for post in posts:
+            total += post["likes"]
+        avg = total / len(posts)
+        return avg
