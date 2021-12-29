@@ -39,7 +39,8 @@ def home():
 
     if first_execution:
         db.create_all()
-        schedule.every(10).seconds.do(write_stats_to_db)
+        schedule.every().day.at("08:00").do(write_stats_to_db)
+        schedule.every().day.at("20:00").do(write_stats_to_db)
         thread = run_continuously()
         first_execution = False
 

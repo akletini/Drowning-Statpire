@@ -4,6 +4,9 @@ from os.path import expanduser
 from platform import system
 from sqlite3 import OperationalError, connect
 
+"""
+Execute this script after logging into Instagram within a Firefox browser
+"""
 try:
     from instaloader import ConnectionException, Instaloader
 except ModuleNotFoundError:
