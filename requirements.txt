@@ -1,7 +1,10 @@
 SQLAlchemy<1.4.0
-Schedule==1.1.0
-Flask==1.1.2
-Flask-SQLAlchemy==2.2.4
-beautifulsoup4==4.9.3
-instaloader==4.7.2
-spotipy==2.18.0
+Schedule<1.1.0
+Flask<1.1.2
+Flask-SQLAlchemy<2.2.4
+beautifulsoup4<4.9.3
+instaloader<4.7.2
+spotipy<2.18.0
+google-api-python-client<=2.33.0
+google-auth-httplib2<=0.1.0
+google-auth-oauthlib<=0.4.6
