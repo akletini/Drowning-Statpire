@@ -2,7 +2,11 @@ from models.models import InstagramEntry, SpotifyEntry, YoutubeEntry
 from .flask_controller import db
 
 
-def persistEntity(entity):
+def init_db():
+    return True
+
+
+def persist_entity(entity):
     try:
         db.session.add(entity)
         db.session.commit()
@@ -10,7 +14,16 @@ def persistEntity(entity):
         db.session.rollback()
 
 
-def getAllEntries(entityType):
+def persist_entities(entities: list):
+    try:
+        for entity in entities:
+            db.session.add(entity)
+        db.session.commit()
+    except:
+        db.session.rollback()
+
+
+def get_all_entries(entityType):
     if entityType is "Instagram":
         return InstagramEntry.query.all()
     elif entityType is "Spotify":
@@ -21,12 +34,12 @@ def getAllEntries(entityType):
         return []
 
 
-def deleteEntry(entity):
+def delete_entry(entity):
     db.session.delete(entity)
     db.session.commit()
 
 
-def deleteAllEntries(entityType):
+def delete_all_entries(entityType):
     try:
         if entityType is "Instagram":
             num_deleted = InstagramEntry.query.delete()

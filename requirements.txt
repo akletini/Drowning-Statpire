@@ -1,1 +1,7 @@
 SQLAlchemy<1.4.0
+Schedule==1.1.0
+Flask==1.1.2
+Flask-SQLAlchemy==2.2.4
+beautifulsoup4==4.9.3
+instaloader==4.7.2
+spotipy==2.18.0

@@ -1,6 +1,7 @@
 from .dec_base import Base
 from sqlalchemy import Column, Integer, String, DateTime
 from controller.flask_controller import db
+from datetime import datetime
 
 
 class InstagramEntry(db.Model):
@@ -8,17 +9,30 @@ class InstagramEntry(db.Model):
     __tablename__ = "InstagramInfo"
 
     id = Column(Integer, primary_key=True)
-    followCount = Column(Integer)
-    followeeCount = Column(Integer)
+    follow_count = Column(Integer)
+    followee_count = Column(Integer)
     date = Column(DateTime)
+    num_posts = Column(Integer)
+    total_likes = Column(Integer)
+    total_comments = Column(Integer)
 
-    def __init__(self, followCount, followeeCount, date):
-        self.followCount = followCount
-        self.followeeCount = followeeCount
-        self.date = date
+    def __init__(
+        self,
+        follow_count,
+        followee_count,
+        num_posts,
+        total_likes,
+        total_comments,
+    ):
+        self.follow_count = follow_count
+        self.followee_count = followee_count
+        self.date = datetime.now()
+        self.num_posts = num_posts
+        self.total_likes = total_likes
+        self.total_comments = total_comments
 
     def __repr__(self):
-        return f"Followers: {self.followCount}, Following: {self.followeeCount} (last checked on: {self.date})"
+        return f"Followers: {self.follow_count}, Following: {self.followee_count} (last checked on: {self.date})"
 
 
 class SpotifyEntry(db.Model):
@@ -26,17 +40,17 @@ class SpotifyEntry(db.Model):
     __tablename__ = "SpotifyInfo"
 
     id = Column(Integer, primary_key=True)
-    followCount = Column(Integer)
+    follow_count = Column(Integer)
     monthly_listeners = Column(Integer)
     date = Column(DateTime)
 
-    def __init__(self, followCount, monthly_listeners, date):
-        self.followCount = followCount
+    def __init__(self, follow_count, monthly_listeners):
+        self.follow_count = follow_count
         self.monthly_listeners = monthly_listeners
-        self.date = date
+        self.date = datetime.now()
 
     def __repr__(self):
-        return f"Followers: {self.followCount}, Monthly listeners: {self.monthly_listeners} (last checked on: {self.date})"
+        return f"Followers: {self.follow_count}, Monthly listeners: {self.monthly_listeners} (last checked on: {self.date})"
 
 
 class YoutubeEntry(db.Model):
@@ -44,14 +58,16 @@ class YoutubeEntry(db.Model):
     __tablename__ = "YoutubeInfo"
 
     id = Column(Integer, primary_key=True)
-    subCount = Column(Integer)
-    totalViews = Column(Integer)
+    sub_count = Column(Integer)
+    total_views = Column(Integer)
+    video_count = Column(Integer)
     date = Column(DateTime)
 
-    def __init__(self, subCount, totalViews, date):
-        self.subCount = subCount
-        self.totalViews = totalViews
-        self.date = date
+    def __init__(self, sub_count, total_views, video_count):
+        self.sub_count = sub_count
+        self.total_views = total_views
+        self.video_count = video_count
+        self.date = datetime.now()
 
     def __repr__(self):
-        return f"Followers: {self.subCount}, Total views: {self.totalViews} (last checked on: {self.date})"
+        return f"Followers: {self.sub_count}, Total views: {self.total_views} (last checked on: {self.date})"

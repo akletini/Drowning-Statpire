@@ -44,60 +44,32 @@
       >
         <h5>Drowning Empire</h5>
       </button>
-      <nav class="my-2 my-md-0 mr-md-1">
+      <nav class="my-2 my-md-0 mr-md-3">
         <a class="p-2 text-dark" href="/instagramDetails">Main stats</a>
-        <a class="p-2 text-dark" href="/instagramDetails/allPosts"
-          >Post overview</a
-        >
+        <a class="p-2 text-dark" href="/instagramDetails/allPosts">Post overview</a>
         <a class="p-2 text-dark" href="/instagramTrends">Trend</a>
         <a class="p-2 text-dark" href="#"></a>
       </nav>
     </div>
     <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
       <h1 class="display-4">Details for Instagram</h1>
-      <h7 class="display-6">Most relevant stats</h7>
+      <h7 class="display-6">Post overview</h7>
       <p class="lead"></p>
     </div>
-    <hr class="mt-2 mb-3" />
-    <div class="text-center">
-      <div class="text-left">
-        <h1 class="display-4">Followers: {{ followers }}</h1>
-        <h1 class="display-6">
-          <span style="color: red">+15</span>
-          in the last 30 days
-        </h1>
-      </div>
-    </div>
-    <hr class="mt-xxl-5 mb-xl-3" />
-    <div class="text-center">
-      <div class="text-left">
-        <h1 class="display-4">Average likes: {{ avgLikes }}</h1>
-        <h1 class="display-6">
-          <span style="color: red">+15</span>
-          in the last 30 days
-        </h1>
-      </div>
-    </div>
-    <hr class="mt-xxl-5 mb-xl-3" />
-    <div class="text-center">
-      <div class="text-left">
-        <h1 class="display-4">Average comments: {{ avgComments }}</h1>
-        <h1 class="display-6">
-          <span style="color: red">+15</span>
-          in the last 30 days
-        </h1>
-      </div>
-    </div>
-    <hr class="mt-xxl-5 mb-xl-3" />
-    <div class="text-center">
-      <div class="text-left">
-        <h1 class="display-4">Max like count: {{ maxLikes }}</h1>
-      </div>
-    </div>
-    <hr class="mt-xxl-5 mb-xl-3" />
-    <div class="text-center">
-      <div class="text-left">
-        <h1 class="display-4">Max comment count: {{ maxComments }}</h1>
+    <div class="btn-group d-grid mx-auto">
+      <div class="col-xxl-6 mx-auto">
+        {% for post in post_array %}
+        <div class="text-center pb-3">
+          <button
+            type="button"
+            class="btn btn-lg btn-outline-dark gap-4 text-left"
+            onclick="location.href='/instagramDetails/allPosts/ {{posts|length -  post.id }}'"
+          >
+            Post: {{ post.id}}, posted on {{ post.date}} </br> with {{ post.likes }}
+            Likes and {{ post.comments }} comments
+          </button>
+        </div>
+        {% endfor %}
       </div>
     </div>
     <!-- Bootstrap Zeug-->

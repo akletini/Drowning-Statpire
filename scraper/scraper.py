@@ -1,7 +1,7 @@
 import requests
 import instaloader
 import spotipy
-import json, os
+import json, os, re
 from spotipy.oauth2 import SpotifyOAuth, SpotifyClientCredentials
 from bs4 import BeautifulSoup
 from googleapiclient.discovery import build
@@ -12,8 +12,9 @@ class Scraper:
         self.credentials = {}
         self.instaloader = None
         self.instagramProfile = None
+        self.instagramPosts = None
 
-    def initCredentials(self):
+    def init_credentials(self):
         __location__ = os.path.realpath(
             os.path.join(os.getcwd(), os.path.dirname(__file__))
         )
@@ -24,20 +25,25 @@ class Scraper:
             self.credentials["instagram"]["user"]
         )
 
-    def getInstagramStats(self):
+    def get_instagram_stats(self):
         profile = instaloader.Profile.from_username(
             self.instaloader.context, "drowningempire"
         )
         self.instagramProfile = profile
-        return [profile.followers, profile.followees]
+        return [
+            profile.followers,
+            profile.followees,
+            list(profile.get_posts()),
+        ]
 
-    def getInstagramPostDetails(self):
+    def get_instagram_post_details(self):
         if self.instagramProfile is None:
-            self.getInstagramStats()
+            self.get_instagram_stats()
 
         profile = self.instagramProfile
         post_array = []
         posts = list(profile.get_posts())
+        self.instagramPosts = posts
         post_count = len(posts)
         i = 0
         for post in posts:
@@ -56,21 +62,25 @@ class Scraper:
             i += 1
         return post_array
 
-    def getSpotifyMonthlyListeners(self):
+    def get_spotify_monthly_listeners(self):
         url = "https://open.spotify.com/artist/34eXrgTr84KLThfaO8BAa8"
-        page = requests.get(url, headers={"Cache-Control": "no-cache"})
-
+        session = requests.session()
+        page = session.get(
+            url, headers={"Cache-Control": "max-age=3000, must-revalidate"}
+        )
+        session.cookies.clear()
         soup = BeautifulSoup(page.content, "html.parser")
 
         line = soup.find("meta", property="og:description")
-        print(line)
+        # print(line)
+
         content = line["content"]
         content = content.split("Artist · ")[1]
         content = content.split(" monthly")[0]
 
         return content
 
-    def getSpotifyFollowersWithAPI(self):
+    def get_spotify_followers_with_API(self):
         client_id = self.credentials["spotify"]["client_id"]
         client_secret = self.credentials["spotify"]["client_secret"]
 
@@ -87,12 +97,12 @@ class Scraper:
         followers = artist["followers"]["total"]
         return followers
 
-    def getSpotifyStats(self):
-        followers = self.getSpotifyFollowersWithAPI()
-        monthly_listeners = self.getSpotifyMonthlyListeners()
+    def get_spotify_stats(self):
+        followers = self.get_spotify_followers_with_API()
+        monthly_listeners = self.get_spotify_monthly_listeners()
         return [followers, monthly_listeners]
 
-    def getYouTubeStats(self):
+    def get_youtube_stats(self):
         api_key = self.credentials["youtube"]["api_key"]
 
         youtube = build("youtube", "v3", developerKey=api_key)
@@ -103,27 +113,43 @@ class Scraper:
 
         response = request.execute()
 
-        subCount = response["items"][0]["statistics"]["subscriberCount"]
-        totalViewCount = response["items"][0]["statistics"]["viewCount"]
+        sub_count = response["items"][0]["statistics"]["subscriberCount"]
+        total_view_count = response["items"][0]["statistics"]["viewCount"]
+        video_count = response["items"][0]["statistics"]["videoCount"]
 
         with open("yt_response.json", "w") as jsonFile:
             json.dump(response, jsonFile, indent=4, sort_keys=False)
 
-        return [subCount, totalViewCount]
+        return [sub_count, total_view_count, video_count]
 
     ## UTIL Methods ##
 
-    def getMostLikedPost(self, posts):
+    def get_most_likes_on_post(self, posts):
         max = 0
         for post in posts:
             if max < post["likes"]:
                 max = post["likes"]
         return max
 
-    def getAvgLikes(self, posts):
+    def get_most_comments_on_post(self, posts):
+        max = 0
+        for post in posts:
+            if max < post["comments"]:
+                max = post["comments"]
+        return max
+
+    def get_avg_likes(self, posts):
         avg = 0
         total = 0
         for post in posts:
             total += post["likes"]
+        avg = total / len(posts)
+        return avg
+
+    def get_avg_comments(self, posts):
+        avg = 0
+        total = 0
+        for post in posts:
+            total += post["comments"]
         avg = total / len(posts)
         return avg

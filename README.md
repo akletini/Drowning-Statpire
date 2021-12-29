@@ -20,14 +20,14 @@ from controller.flask_controller import db
 db.drop_all()
 ```
 
-## Create and Retrieve all Entries (i.e. for Instagram Statistics)
+## Create and Retrieve all Entries (e.g. for Instagram Statistics)
 
 ```python
 from controller.flask_controller import db
 from models.models import InstagramEntry
 
 # creation
-entry = InstagramEntry(<followCount>, <followeeCount>, <dateOfSearch>)
+entry = InstagramEntry(..params..)
 db.session.add(entry)
 db.session.commit()
 
