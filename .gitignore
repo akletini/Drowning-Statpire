@@ -166,6 +166,8 @@ Thumbs.db
 ### Drowning Statpire specific
 *.json
 *.db
-static/
+static/*.jpg
+static/*.xz
+static/*.txt
 
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode
