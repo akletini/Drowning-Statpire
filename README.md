@@ -1,6 +1,8 @@
 # Drowning-Statpire
 
-Simple Web-Application to monitor social media statistics for the band Drowning Empire using Python with Flask and SQLAlchemy
+Simple Web-Application to monitor social media statistics for the band Drowning Empire using Python with Flask and SQLAlchemy.
+
+The application will collect data for Instagram, YouTube and Spotify twice every day to create a database for visualizing trends and possibly apply machine learning at a later stage. Therefore a sufficient amount of data over a large timespan has to be aggregated (ideally including promotion cycles, releases, etc.).  
 
 #
 
