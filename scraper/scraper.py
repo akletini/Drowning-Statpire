@@ -66,17 +66,22 @@ class Scraper:
         url = "https://open.spotify.com/artist/34eXrgTr84KLThfaO8BAa8"
         session = requests.session()
         page = session.get(
-            url, headers={"Cache-Control": "max-age=3000, must-revalidate"}
+            url, headers={"Cache-Control": "max-age=3000, must-revalidate", "User-Agent": "Mozilla/5.0 (X11; CrOS armv7l 13597.84.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.187 Safari/537.36"}
         )
         session.cookies.clear()
         soup = BeautifulSoup(page.content, "html.parser")
 
         line = soup.find("meta", property="og:description")
-        # print(line)
+        print(line)
 
-        content = line["content"]
-        content = content.split("Artist · ")[1]
-        content = content.split(" monthly")[0]
+        content = -1
+        try:
+            content = line["content"]
+            content = content.split("Artist · ")[1]
+            content = content.split(" monthly")[0]
+        except:
+            pass
+        
 
         return content
 

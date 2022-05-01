@@ -166,6 +166,9 @@ Thumbs.db
 ### Drowning Statpire specific
 *.json
 *.db
+*.yaml
+*.yml
+data/*.csv
 static/*.jpg
 static/*.xz
 static/*.txt

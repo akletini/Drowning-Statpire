@@ -201,7 +201,18 @@ def write_stats_to_db():
     spotify_entry = SpotifyEntry(
         follow_count=spotify_stats[0], monthly_listeners=spotify_stats[1]
     )
+    with app.app_context():
+        db_controller.persist_entities(
+            [instagram_entry, youtube_entry, spotify_entry]
+        )
 
-    db_controller.persist_entities(
-        [instagram_entry, youtube_entry, spotify_entry]
+    os.system("python3 write_db_to_drive.py")
+    return render_template(
+        "index.html",
+        subcount=yt_stats[0],
+        totalViews=yt_stats[1],
+        instaFollowers=insta_stats[0],
+        instaFollowees=insta_stats[1],
+        spotifyFollowers=spotify_stats[0],
+        spotifyMonthly=spotify_stats[1],
     )
